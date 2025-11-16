@@ -207,43 +207,50 @@ def cron_send_emails():
         sender_email = os.environ.get('EMAIL_ADDRESS')
         sender_password = os.environ.get('EMAIL_PASSWORD')
         
-        logger.info(f"🚀 TEST MODE: Cron executed at {now.isoformat()} - Business hours IGNORED")
+        logger.info(f"🚀 CRON JOB TRIGGERED: {now.isoformat()}")
+        logger.info(f"📧 Email config check - Address: {bool(sender_email)}, Password: {bool(sender_password)}")
         
         if not sender_email or not sender_password:
+            logger.error("❌ CRON FAILED: Email credentials not configured")
             return jsonify({'status': 'error', 'message': 'Email credentials not configured'}), 500
         
         recipient_data = get_next_recipient()
+        logger.info(f"👤 Recipient data: {bool(recipient_data)}")
         
         if recipient_data and recipient_data['email']:
+            logger.info(f"📨 Attempting to send email to: {recipient_data['email']}")
             success, message = send_email_with_cv(
                 recipient_email=recipient_data['email'],
                 recipient_name=recipient_data['full_name'],
-                subject=f"[TEST] {recipient_data['subject']}",
-                body=f"[TEST MODE - NO BUSINESS HOURS]\n\n{recipient_data['content']}\n\n--- TEST EMAIL SENT AT {now.isoformat()} ---",
+                subject=f"[CRON] {recipient_data['subject']}",
+                body=f"[CRON JOB EMAIL - TEST MODE]\n\n{recipient_data['content']}\n\n--- AUTOMATED EMAIL SENT AT {now.isoformat()} ---",
                 sender_email=sender_email,
                 sender_password=sender_password
             )
             
             if success:
+                logger.info(f"✅ CRON EMAIL SENT SUCCESSFULLY to {recipient_data['email']}")
                 return jsonify({
                     'status': 'success',
-                    'message': f'✅ TEST EMAIL sent successfully! ({message})',
+                    'message': f'✅ CRON EMAIL sent successfully! ({message})',
                     'mode': 'TEST MODE - Business hours ignored',
                     'timestamp': now.isoformat(),
                     'email_details': {
                         'to': recipient_data['email'],
                         'recipient_name': recipient_data['full_name'],
-                        'subject': f"[TEST] {recipient_data['subject']}",
+                        'subject': f"[CRON] {recipient_data['subject']}",
                         'recipient_number': recipient_data['counter'] + 1,
                         'total_recipients': recipient_data['total_recipients']
                     }
                 })
             else:
+                logger.error(f"❌ CRON EMAIL FAILED: {message}")
                 return jsonify({
                     'status': 'error',
-                    'message': f'❌ Failed to send TEST email: {message}'
+                    'message': f'❌ Failed to send CRON email: {message}'
                 }), 500
         else:
+            logger.error("❌ CRON FAILED: No recipient data available")
             return jsonify({
                 'status': 'error',
                 'message': 'No recipient data available'
