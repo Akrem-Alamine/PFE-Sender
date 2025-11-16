@@ -1,0 +1,18 @@
+runtime: python39
+
+entrypoint: gunicorn --bind :$PORT main_test:app
+
+env_variables:
+  EMAIL_ADDRESS: "akrem.alamine@gmail.com"
+  EMAIL_PASSWORD: "your_app_password_here"  # Replace with your Gmail app password
+  CSV_FILE_PATH: "data/recipients.csv"
+  START_HOUR: "0"   # Disabled for testing
+  END_HOUR: "23"    # Disabled for testing
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 3
+
+handlers:
+- url: /.*
+  script: auto

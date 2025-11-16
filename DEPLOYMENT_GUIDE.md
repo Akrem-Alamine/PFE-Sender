@@ -8,8 +8,10 @@ Status: **Successfully updated with clean production code**
 
 ### 🗂️ Essential Files Only:
 - ✅ `main.py` - Production Flask application (470 lines, complete)
+- ✅ `main_test.py` - TEST version (ignores business hours for testing)
+- ✅ `app.yaml` - GCP App Engine configuration (production)
+- ✅ `app_test.yaml` - GCP App Engine configuration (testing)
 - ✅ `requirements.txt` - Minimal dependencies (Flask + gunicorn)
-- ✅ `app.yaml` - GCP App Engine configuration
 - ✅ `data/recipients.csv` - 10 mock recipients (all emails → akrem.alamine@etudiant-fst.utm.tn)
 - ✅ `assets/Akrem_Alamine_ENOP.pdf` - CV attachment
 - ✅ `deployment/cron.yaml` - Cron job configuration
@@ -28,14 +30,32 @@ Status: **Successfully updated with clean production code**
 
 ## 🎯 Next Steps - Deploy to Production
 
+### ⚠️ TESTING MODE AVAILABLE
+
+**For immediate testing (ignores business hours):**
+```bash
+# Deploy TEST version (sends emails 24/7)
+gcloud app deploy app_test.yaml --quiet
+
+# Test immediately (no business hours restriction)
+curl -X POST https://pfe-sender.uc.r.appspot.com/cron/send-emails
+curl -X POST https://pfe-sender.uc.r.appspot.com/test-email
+```
+
 ### Step 1: ✅ Repository Setup (COMPLETED)
 The GitHub repository has been successfully updated with the clean production code.
 
 ### Step 2: Deploy to GCP Cloud Shell
 ```bash
-# In Google Cloud Shell, clone the updated repository
+# Remove old directory if it exists
+rm -rf PFE-Sender
+
+# Clone the updated repository
 git clone https://github.com/Akrem-Alamine/PFE-Sender.git
 cd PFE-Sender
+
+# Verify the updated files are present
+ls -la
 
 # Enable required APIs
 gcloud services enable cloudbuild.googleapis.com
