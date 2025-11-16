@@ -359,15 +359,6 @@ def get_next_recipient():
         logger.error(f"Error reading CSV file: {str(e)}")
         return None
 
-@app.route('/')
-def home():
-    return jsonify({
-        'status': 'OK',
-        'message': 'PFE Automated Email Sender - Production',
-        'version': '3.0-CLEAN',
-        'timestamp': datetime.now().isoformat()
-    })
-
 @app.route('/health')
 def health():
     return jsonify({
