@@ -119,6 +119,8 @@ GitHub: [Your GitHub Profile]
 
 P.S. I'm particularly excited about {company}'s position in the {company_insights['industry'].lower()} industry and would love to discuss how emerging technologies could drive your next phase of growth."""
 
+    return subject, email_body
+
 def send_email_with_cv(recipient_email, recipient_name, subject, body, sender_email, sender_password):
     """Send email with CV attachment"""
     try:
