@@ -77,11 +77,11 @@ def generate_personalized_email(first_name, last_name, title, company, country, 
     
     # Create personalized subject line
     subjects = [
-        f"Partnership Opportunity for {company}",
-        f"Innovative Solutions for {company}'s Growth",
-        f"Software Development Expertise for {company}",
-        f"Technical Partnership Proposal - {company}",
-        f"Digital Transformation Solutions for {company}"
+        f"DevOps Engineer - End of Study Internship Opportunity at {company}",
+        f"Cloud Infrastructure Specialist - PFE Application for {company}",
+        f"Final Year Student - DevOps & Cloud Expertise for {company}",
+        f"End-of-Study Project - DevOps Engineering Position at {company}",
+        f"Junior DevOps Engineer - Seeking Opportunities at {company}"
     ]
     
     # Select subject based on company name hash for consistency
@@ -91,33 +91,42 @@ def generate_personalized_email(first_name, last_name, title, company, country, 
     # Generate personalized email body
     email_body = f"""Dear {first_name} {last_name},
 
-I hope this message finds you well. As the {title} at {company}, I believe you would be interested in learning about how we can support your organization's growth in the {company_insights['industry'].lower()} sector.
+I hope this message finds you well. As the {title} at {company}, I believe you would be interested in learning about my expertise in DevOps and cloud technologies that could benefit your organization.
 
-I am Akrem Alamine, a passionate software developer with extensive experience in:
+I am Akrem Alamine, a final-year engineering student specializing in DevOps and cloud infrastructure with hands-on experience in:
 
-• Full-stack web development (Python, Flask, React)
-• Cloud infrastructure and deployment (GCP, AWS, Docker)
-• Database design and API development
-• DevOps practices and automation
-• AI/ML integration and data analysis
+• Cloud Infrastructure & Deployment (GCP, AWS, Azure)
+• DevOps & CI/CD Pipelines (Docker, Kubernetes, Jenkins)
+• Infrastructure as Code (Terraform, CloudFormation)
+• Automation & Monitoring (Python scripting, Prometheus, Grafana)
+• Containerization & Orchestration
+• Database Management & API Development
 
-Given {company}'s focus on {company_insights['focus']}, I believe my technical expertise could contribute significantly to your team's objectives. In today's {company_insights['market']}, having robust technical solutions and {company_insights['values']} is crucial for success.
+Given {company}'s position in the {company_insights['industry'].lower()} sector and focus on {company_insights['focus']}, I believe my technical skills in cloud architecture and DevOps practices could contribute significantly to your infrastructure modernization and operational efficiency goals.
 
-I would welcome the opportunity to discuss how my skills and experience could benefit {company}'s continued growth{f' in {country}' if country else ''}. Whether you're looking for full-time talent, consulting expertise, or technical partnership opportunities, I'm confident we can find mutually beneficial ways to collaborate.
+As I am completing my engineering studies, I am actively seeking end-of-study internship opportunities or entry-level positions where I can apply my DevOps and cloud expertise while contributing to innovative projects. I am particularly drawn to {company}'s commitment to {company_insights['values']} and would be excited to help optimize your deployment pipelines and cloud infrastructure.
 
-I have attached my comprehensive CV for your review, which details my technical projects, achievements, and professional experience.
+Whether you have current openings for:
+• DevOps Engineer positions
+• Cloud Infrastructure roles  
+• End-of-study internships (PFE - Projet de Fin d'Études)
+• Junior SysAdmin or Site Reliability Engineer positions
 
-Thank you for your time and consideration. I look forward to the possibility of contributing to {company}'s continued success.
+I would welcome the opportunity to discuss how my technical skills and fresh perspective could support {company}'s continued growth{f' in {country}' if country else ''}.
+
+I have attached my comprehensive CV detailing my technical projects, cloud certifications, and hands-on experience with modern DevOps tools and practices.
+
+Thank you for your time and consideration. I look forward to the possibility of joining {company}'s technical team and contributing to your infrastructure excellence.
 
 Best regards,
 
 Akrem Alamine
-Software Developer & Technical Consultant
+DevOps & Cloud Engineering Student
 Email: akrem.alamine@gmail.com
-LinkedIn: [Your LinkedIn Profile]
-GitHub: [Your GitHub Profile]
+LinkedIn: linkedin.com/in/akrem-alamine
+GitHub: github.com/Akrem-Alamine
 
-P.S. I'm particularly excited about {company}'s position in the {company_insights['industry'].lower()} industry and would love to discuss how emerging technologies could drive your next phase of growth."""
+P.S. I'm particularly excited about the potential to implement cutting-edge DevOps practices at {company} and would love to discuss how modern cloud architectures could accelerate your development cycles and operational reliability."""
 
     return subject, email_body
 
