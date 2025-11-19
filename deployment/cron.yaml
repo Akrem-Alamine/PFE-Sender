@@ -1,5 +1,6 @@
 cron:
-- description: "Send automated emails every minute during business hours"
+- description: "Send automated emails every minute - Mayez Data Engineering Service"
   url: /cron/send-emails
   schedule: every 1 minutes
   timezone: UTC
+  service: mayez-data-engineering
