@@ -3,4 +3,4 @@ cron:
   url: /cron/send-emails
   schedule: every 1 minutes
   timezone: UTC
-  service: mayez-data-engineering
+  target: mayez-data-engineering
