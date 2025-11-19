@@ -116,8 +116,8 @@ Best regards,
 Mayez Ghouma
 Data Engineering & MLOps Student
 Email: mayez.ghouma@etudiant-fst.utm.tn
-LinkedIn: linkedin.com/in/mayez-ghouma
-GitHub: github.com/mayez-ghouma"""
+Phone: +216 XX XXX XXX
+Portfolio: Available upon request"""
 
     return subject, email_body
 
