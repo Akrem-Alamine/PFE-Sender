@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-PFE Automated Email Sender - PRODUCTION VERSION with AI Content Generation
+Data Engineering Automated Email Sender - PRODUCTION VERSION with AI Content Generation
 Fully automated pipeline: Company Research → Content Generation → Email Sending
+For Mayez Ghouma - Data Engineering & MLOps Internship Applications
 """
 
 import os
@@ -77,11 +78,11 @@ def generate_personalized_email(first_name, last_name, title, company, country, 
     
     # Create personalized subject line
     subjects = [
-        f"DevOps Internship Application - {company}",
-        f"Cloud Engineering Student - Internship Opportunity at {company}",
-        f"End-of-Study Internship - DevOps & Cloud Expertise",
-        f"DevOps Student seeking Internship at {company}",
-        f"Final Year Student - Cloud Infrastructure Internship"
+        f"Data Engineering Internship Application - {company}",
+        f"MLOps Student - Internship Opportunity at {company}",
+        f"End-of-Study Internship - Data Engineering & MLOps Expertise",
+        f"Data Science Student seeking Internship at {company}",
+        f"Final Year Student - AI/ML Infrastructure Internship"
     ]
     
     # Select subject based on company name hash for consistency
@@ -91,30 +92,32 @@ def generate_personalized_email(first_name, last_name, title, company, country, 
     # Generate personalized email body
     email_body = f"""Dear {first_name} {last_name},
 
-I hope this message finds you well. As the {title} at {company}, I believe you would be interested in learning about my expertise in DevOps and cloud technologies.
+I hope this message finds you well. As the {title} at {company}, I believe you would be interested in learning about my expertise in data engineering and machine learning operations.
 
-I am Akrem Alamine, a final-year engineering student specializing in DevOps and cloud infrastructure with hands-on experience in:
+I am Mayez Ghouma, a final-year data engineering student specializing in MLOps and AI infrastructure with hands-on experience in:
 
-• Cloud Infrastructure & Deployment (GCP, AWS, Azure)
-• DevOps & CI/CD Pipelines (Docker, Kubernetes, Jenkins)
-• Infrastructure as Code (Terraform, CloudFormation)
-• Automation & Monitoring (Python scripting, Prometheus, Grafana)
+• Data Pipeline Development & ETL (Apache Airflow, Kafka, Spark)
+• Machine Learning Operations (MLflow, Kubeflow, Docker, Kubernetes)
+• Cloud Data Platforms (GCP, AWS, Azure Data Services)
+• Big Data Technologies (Hadoop, Spark, Elasticsearch)
+• Data Warehousing & Analytics (BigQuery, Snowflake, dbt)
+• ML Model Deployment & Monitoring (TensorFlow Serving, FastAPI)
 
-Given {company}'s focus on {company_insights['focus']}, I believe my technical skills in cloud architecture and DevOps practices could contribute to your infrastructure modernization goals.
+Given {company}'s focus on {company_insights['focus']}, I believe my technical skills in data engineering and MLOps practices could contribute to your data-driven initiatives and machine learning infrastructure.
 
-As I am completing my engineering studies, I am actively seeking end-of-study internship opportunities where I can apply my DevOps and cloud expertise while contributing to innovative projects{f' in {country}' if country else ''}.
+As I am completing my data engineering studies, I am actively seeking end-of-study internship opportunities where I can apply my MLOps and data engineering expertise while contributing to innovative AI/ML projects{f' in {country}' if country else ''}.
 
-I would welcome the opportunity to discuss how my technical skills and fresh perspective could support {company}'s continued growth. I have attached my comprehensive CV detailing my technical projects and hands-on experience with modern DevOps tools.
+I would welcome the opportunity to discuss how my technical skills and passion for data science could support {company}'s data strategy and machine learning initiatives. I have attached my comprehensive CV detailing my technical projects and hands-on experience with modern data engineering and MLOps tools.
 
 Thank you for your time and consideration.
 
 Best regards,
 
-Akrem Alamine
-DevOps & Cloud Engineering Student
-Email: akrem.alamine@etudiant-fst.utm.tn
-LinkedIn: linkedin.com/in/akrem-alamine
-GitHub: github.com/Akrem-Alamine"""
+Mayez Ghouma
+Data Engineering & MLOps Student
+Email: mayez.ghouma@etudiant-fst.utm.tn
+LinkedIn: linkedin.com/in/mayez-ghouma
+GitHub: github.com/mayez-ghouma"""
 
     return subject, email_body
 
@@ -240,9 +243,11 @@ def get_next_recipient():
 def home():
     return jsonify({
         'status': 'OK',
-        'message': 'PFE Automated Email Sender - PRODUCTION with AI Content',
-        'version': '4.0-AUTO',
-        'features': ['Company Research', 'AI Content Generation', 'Personalized Emails'],
+        'message': 'Data Engineering Email Sender - Mayez Ghouma with AI Content',
+        'student': 'Mayez Ghouma',
+        'specialization': 'Data Engineering & MLOps',
+        'version': '4.0-DATA-ENGINEERING',
+        'features': ['Company Research', 'AI Content Generation', 'MLOps Personalized Emails'],
         'timestamp': datetime.now().isoformat()
     })
 
@@ -250,10 +255,11 @@ def home():
 def health():
     return jsonify({
         'status': 'healthy',
-        'service': 'pfe-email-sender-auto',
-        'version': '4.0-AUTO',
+        'service': 'data-engineering-email-sender',
+        'student': 'Mayez Ghouma',
+        'version': '4.0-DATA-ENGINEERING',
         'environment': 'production',
-        'automation': 'full pipeline active',
+        'automation': 'full MLOps pipeline active',
         'timestamp': datetime.now().isoformat()
     })
 
@@ -612,6 +618,7 @@ def test_email():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
-    logger.info(f"🚀 Starting PFE Email Sender - CLEAN VERSION v3.0 on port {port}")
+    logger.info(f"🚀 Starting Data Engineering Email Sender - Mayez Ghouma v4.0 on port {port}")
+    logger.info(f"📊 Specialization: Data Engineering & MLOps Internship Applications")
     logger.info(f"⏰ Business hours: {os.environ.get('START_HOUR', '9')}:00 - {os.environ.get('END_HOUR', '17')}:00 UTC")
     app.run(host='0.0.0.0', port=port, debug=False)

@@ -1,22 +1,23 @@
-# PFE Automated Email Sender - Clean Production Version
+# Data Engineering Automated Email Sender - Mayez Ghouma
 
-## 📋 Overview
-Automated email sender that sends personalized recruitment emails during business hours (Monday-Friday, 9 AM - 5 PM UTC) using CSV recipient data.
+## 📅 Overview
+Automated email sender for MLOps and Data Engineering internship applications. Sends personalized recruitment emails during business hours (Monday-Friday, 9 AM - 5 PM UTC) using CSV recipient data. Designed for Mayez Ghouma, Data Engineering student seeking internships in Data Science, AI, and MLOps.
 
 ## ✅ Features
 - **Business Hours Only**: Emails sent Monday-Friday, 9 AM - 5 PM UTC
 - **Round-Robin Recipients**: Cycles through CSV recipients automatically  
-- **CV Attachment**: Includes CV in every email
-- **Personalization**: Uses first name, last name, and full name placeholders
+- **CV Attachment**: Includes Mayez Ghouma's CV in every email
+- **MLOps Personalization**: Tailored content for Data Engineering, AI, and MLOps positions
 - **GCP Deployment**: Ready for Google Cloud Platform
 - **Cron Automation**: Sends 1 email per minute during business hours
+- **AI Content Generation**: Automated personalization for data science roles
 
 ## 🚀 Quick Deployment
 
 ### 1. Upload to GitHub
 ```bash
-git clone https://github.com/Akrem-Alamine/PFE-Email-Sender-Clean.git
-cd PFE-Email-Sender-Clean
+git clone https://github.com/Akrem-Alamine/PFE-Sender.git
+cd PFE-Sender
 ```
 
 ### 2. Deploy to GCP
@@ -42,14 +43,14 @@ curl https://your-project.uc.r.appspot.com/status
 
 ## 📁 File Structure
 ```
-PFE-Email-Sender-Clean/
+PFE-Sender/
 ├── main.py                 # Main Flask application
 ├── requirements.txt        # Python dependencies
 ├── app.yaml               # GCP configuration
 ├── data/
-│   └── recipients.csv     # Email recipients (10 mock entries)
+│   └── contacts_real.csv   # Email recipients data
 ├── assets/
-│   └── Akrem_Alamine_ENOP.pdf  # CV attachment
+│   └── cv_Mayez-Ghouma.pdf  # Mayez Ghouma's CV attachment
 └── deployment/
     └── cron.yaml         # Cron job configuration
 ```
@@ -63,20 +64,21 @@ The `data/recipients.csv` file should have these columns:
 - `content`: Email body with placeholders ({first_name}, {last_name}, {full_name})
 
 ## 🎯 Expected Behavior
-- **10 Mock Recipients**: System cycles through 10 test recipients
-- **All Emails to Test Address**: Every email goes to akrem.alamine@etudiant-fst.utm.tn
+- **Data Engineering Focus**: System targets MLOps, Data Science, and AI positions
+- **Personalized Content**: Emails tailored for data engineering internships
 - **Business Hours Only**: No emails sent on weekends or outside 9 AM - 5 PM UTC
 - **1 Email/Minute**: During business hours, sends 1 personalized email per minute
-- **CV Attached**: Every email includes the CV PDF attachment
+- **CV Attached**: Every email includes Mayez Ghouma's CV PDF attachment
+- **MLOps Expertise**: Content emphasizes data pipelines, ML operations, and big data
 
 ## 🔧 Configuration
 Environment variables are set in `app.yaml`:
-- `EMAIL_ADDRESS`: akrem.alamine@gmail.com
-- `EMAIL_PASSWORD`: apkrvuqqrhhwscas
-- `START_HOUR`: 9 (9 AM UTC)
-- `END_HOUR`: 17 (5 PM UTC)
-- `CSV_FILE_PATH`: data/recipients.csv
-- `CV_FILE_PATH`: assets/Akrem_Alamine_ENOP.pdf
+- `EMAIL_ADDRESS`: mayez.ghouma@etudiant-fst.utm.tn
+- `EMAIL_PASSWORD`: [App-specific password]
+- `START_HOUR`: 0 (Testing mode - 24/7)
+- `END_HOUR`: 23 (Testing mode - 24/7)
+- `CSV_FILE_PATH`: data/contacts_real.csv
+- `CV_FILE_PATH`: assets/cv_Mayez-Ghouma.pdf
 
 ## 🎉 Success Indicators
 1. ✅ Health check returns status "healthy"

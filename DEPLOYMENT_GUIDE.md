@@ -1,91 +1,145 @@
-# 🚀 PFE Email Sender - Complete Deployment Guide
+# 🚀 Data Engineering Email Sender - Mayez Ghouma Deployment Guide
 
-## 📁 Repository Successfully Updated
+## 📁 Repository Successfully Updated - MAYEZ GHOUMA PROFILE
 
 ### ✅ GitHub Repository Updated
 Repository: `https://github.com/Akrem-Alamine/PFE-Sender`
-Status: **Successfully updated with clean production code**
+Status: **Updated with Mayez Ghouma's Data Engineering Profile**
 
 ### 🗂️ Essential Files Only:
-- ✅ `main.py` - Production Flask application (470 lines, complete)
-- ✅ `main_test.py` - TEST version (ignores business hours for testing)
-- ✅ `app.yaml` - GCP App Engine configuration (production)
-- ✅ `app_test.yaml` - GCP App Engine configuration (testing)
-- ✅ `requirements.txt` - Minimal dependencies (Flask + gunicorn)
-- ✅ `data/recipients.csv` - 10 mock recipients (all emails → akrem.alamine@etudiant-fst.utm.tn)
-- ✅ `assets/Akrem_Alamine_ENOP.pdf` - CV attachment
+- ✅ `main.py` - Data Engineering Flask application (Mayez Ghouma profile)
+- ✅ `app.yaml` - GCP App Engine configuration (Mayez Ghouma email & CV)
+- ✅ `requirements.txt` - Minimal dependencies (Flask + gunicorn + requests)
+- ✅ `data/contacts_real.csv` - Real recipient data for data engineering positions
+- ✅ `assets/cv_Mayez-Ghouma.pdf` - Mayez Ghouma's CV attachment
 - ✅ `deployment/cron.yaml` - Cron job configuration
-- ✅ `README.md` - Documentation
+- ✅ `README.md` - Updated documentation for data engineering focus
 - ✅ `.gitignore` - Git ignore file
 
-### ❌ Removed Unnecessary Files:
-- 🗑️ Complex `src/` directory with modules
-- 🗑️ Multiple duplicate app files
-- 🗑️ Test files and local configurations
-- 🗑️ Old deployment guides
-- 🗑️ Environment files (.env)
-- 🗑️ Editor settings (.vscode)
+### ❌ Profile Changes Made:
+- 🔄 Updated from Akrem Alamine (DevOps) to **Mayez Ghouma (Data Engineering)**
+- 🔄 Email content focused on **MLOps, Data Engineering, and AI positions**
+- 🔄 Skills updated to **data pipelines, big data, ML operations**
+- 🔄 CV changed from `Akrem_Alamine_ENOP.pdf` to `cv_Mayez-Ghouma.pdf`
+- 🔄 Email address updated to `mayez.ghouma@etudiant-fst.utm.tn`
+- 🔄 All content personalized for data engineering internship applications
 
 ---
 
-## 🎯 Next Steps - Deploy to Production
+## 🎯 Deployment Strategy - Parallel GCP Services
 
-### ⚠️ TESTING MODE AVAILABLE
+### 🚀 DEPLOY AS SEPARATE SERVICE IN SAME GCP PROJECT
 
-**For immediate testing (ignores business hours):**
+**This version will run alongside the existing PFE-Sender with these key differences:**
+- 📧 **Different email profile**: Mayez Ghouma (Data Engineering)
+- 🔄 **Reverse CSV processing**: Starts from BOTTOM → TOP, stops when reaching top
+- 🎯 **Different service name**: Will be deployed as separate service
+- ⚡ **Same GCP project**: Runs in parallel with existing system
+
+### Step 1: ✅ Commit Current Changes
 ```bash
-# Deploy TEST version (sends emails 24/7)
-gcloud app deploy app_test.yaml --quiet
+# Add all updated files
+git add .
 
-# Test immediately (no business hours restriction)
-curl -X POST https://pfe-sender.uc.r.appspot.com/cron/send-emails
-curl -X POST https://pfe-sender.uc.r.appspot.com/test-email
+# Commit with clear message
+git commit -m "Update profile: Mayez Ghouma - Data Engineering & MLOps
+
+- Changed from Akrem Alamine (DevOps) to Mayez Ghouma (Data Engineering)
+- Updated email content for MLOps and data engineering positions
+- CV updated to cv_Mayez-Ghouma.pdf
+- Email address: mayez.ghouma@etudiant-fst.utm.tn
+- Skills focused on data pipelines, big data, ML operations
+- CSV processing: BOTTOM to TOP (reverse order)
+- Ready for parallel deployment alongside existing PFE-Sender"
+
+# Push to GitHub
+git push origin main
 ```
 
-### Step 1: ✅ Repository Setup (COMPLETED)
-The GitHub repository has been successfully updated with the clean production code.
-
-### Step 2: Deploy to GCP Cloud Shell
+### Step 2: Deploy as Parallel Service in Same GCP Project
 ```bash
-# Remove old directory if it exists
-rm -rf PFE-Sender
+# Create new directory for parallel deployment
+mkdir ~/PFE-Sender-DataEngineering
+cd ~/PFE-Sender-DataEngineering
 
-# Clone the updated repository
-git clone https://github.com/Akrem-Alamine/PFE-Sender.git
-cd PFE-Sender
+# Clone the updated repository with Mayez Ghouma's profile
+git clone https://github.com/Akrem-Alamine/PFE-Sender.git .
 
 # Verify the updated files are present
 ls -la
+cat app.yaml | grep EMAIL_ADDRESS  # Should show mayez.ghouma@etudiant-fst.utm.tn
 
-# Enable required APIs
-gcloud services enable cloudbuild.googleapis.com
-gcloud services enable appengine.googleapis.com
-gcloud services enable cloudscheduler.googleapis.com
+# Update app.yaml for parallel deployment (different service name)
+sed -i 's/service: default/service: mayez-data-engineering/g' app.yaml
 
-# Deploy the application
+# OR manually edit app.yaml to add:
+# service: mayez-data-engineering
+
+# Deploy as separate service in same project
 gcloud app deploy app.yaml --quiet
 
-# Deploy cron jobs
+# Deploy cron jobs for this service
 gcloud app deploy deployment/cron.yaml --quiet
 ```
 
-### Step 3: Test the System
-```bash
-# Test health endpoint
-curl https://pfe-sender.uc.r.appspot.com/health
+### 🔄 CSV Processing - BOTTOM to TOP (Reverse Order)
+**Special Feature**: This version processes CSV from **last record to first record** and **stops when reaching the top**.
 
-# Check system status (should show 10 recipients)
+The system will:
+1. 📊 **Start from bottom row** of contacts_real.csv
+2. 🔄 **Work backwards** through recipients  
+3. 🛑 **Stop when reaching the first row** (top of CSV)
+4. ✅ **No looping** - one complete reverse pass through data
+
+### Step 3: Verify Parallel Services
+```bash
+# Test Mayez's Data Engineering service
+curl https://mayez-data-engineering-dot-pfe-sender.uc.r.appspot.com/health
+curl https://mayez-data-engineering-dot-pfe-sender.uc.r.appspot.com/status
+
+# Test original Akrem's service  
+curl https://pfe-sender.uc.r.appspot.com/health
 curl https://pfe-sender.uc.r.appspot.com/status
 
-# Send manual test email
+# Send manual test emails from both services
+curl -X POST https://mayez-data-engineering-dot-pfe-sender.uc.r.appspot.com/test-email
 curl -X POST https://pfe-sender.uc.r.appspot.com/test-email
 
-# Test cron endpoint
-curl -X POST https://pfe-sender.uc.r.appspot.com/cron/send-emails
-
-# Monitor logs
-gcloud app logs tail -s default
+# Monitor both service logs
+gcloud app logs tail --service=mayez-data-engineering
+gcloud app logs tail --service=default
 ```
+
+## 📋 Verification Steps for Parallel Deployment
+
+### Check Both Services Status
+```bash
+# List all services in the project
+gcloud app services list
+
+# Verify both services are running
+gcloud app versions list
+
+# Check service URLs
+gcloud app browse --service=default  # Original Akrem's service
+gcloud app browse --service=mayez-data-engineering  # New Mayez's service
+```
+
+### Monitor Email Sending from Both Services
+1. **Original Service (Akrem)**: Processes CSV TOP to BOTTOM (normal order)
+2. **New Service (Mayez)**: Processes CSV BOTTOM to TOP (reverse order)
+3. Both services send **1 email per minute** during **work hours only**
+4. Check logs: `gcloud app logs tail --service=mayez-data-engineering`
+
+### 🎯 Key Differences Between Services
+| Feature | Akrem (DevOps) | Mayez (Data Engineering) |
+|---------|---------------|-------------------------|
+| Email Address | akrem.alamine@etudiant-fst.utm.tn | mayez.ghouma@etudiant-fst.utm.tn |
+| CV File | Akrem_Alamine_ENOP.pdf | cv_Mayez-Ghouma.pdf |
+| Processing Order | TOP → BOTTOM | BOTTOM → TOP |
+| Subject Focus | DevOps/Cloud | Data Engineering/MLOps |
+| Service Name | default | mayez-data-engineering |
+| URL | pfe-sender.uc.r.appspot.com | mayez-data-engineering-dot-pfe-sender.uc.r.appspot.com |
 
 ### 🚨 Troubleshooting 502 Errors
 If you get 502 Bad Gateway errors:
@@ -169,18 +223,33 @@ gcloud app deploy app.yaml --quiet
 
 ---
 
-## 🎉 Final Result
+## 🎉 Final Result - Parallel Email Services
 
-Once deployed, your system will:
+Once both services are deployed, you will have:
 
-1. **📧 Send emails every minute** during business hours
-2. **🔄 Cycle through 10 recipients** using round-robin
-3. **📎 Include CV attachment** in every email
-4. **🎯 Deliver all emails** to akrem.alamine@etudiant-fst.utm.tn for testing
-5. **⏰ Respect business hours** (Monday-Friday, 9 AM - 5 PM UTC)
-6. **📊 Provide status tracking** via API endpoints
+### 🏢 **Two Independent Email Services Running Simultaneously:**
 
-**Your automated recruitment email sender is now production-ready!** 🚀
+#### **Service 1: Akrem Alamine (DevOps/Cloud)**
+- 📧 **Sends emails every minute** during business hours  
+- 🔄 **Processes CSV TOP to BOTTOM** (normal order)
+- 🎯 **DevOps/Cloud-focused** email content
+- 📎 **CV**: Akrem_Alamine_ENOP.pdf
+- 📨 **From**: akrem.alamine@etudiant-fst.utm.tn
+
+#### **Service 2: Mayez Ghouma (Data Engineering)**  
+- 📧 **Sends emails every minute** during business hours
+- 🔄 **Processes CSV BOTTOM to TOP** (reverse order)
+- 🎯 **Data Engineering/MLOps-focused** email content  
+- 📎 **CV**: cv_Mayez-Ghouma.pdf
+- 📨 **From**: mayez.ghouma@etudiant-fst.utm.tn
+
+### 🔄 **Combined Coverage Strategy:**
+- **Maximum reach**: Same companies receive applications from both profiles
+- **Different expertise**: DevOps AND Data Engineering applications  
+- **No conflicts**: Reverse processing ensures different timing
+- **Professional diversity**: Two distinct skillsets presented
+
+**Your automated recruitment system now sends TWO types of applications simultaneously!** 🚀
 
 ---
 

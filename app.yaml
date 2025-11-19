@@ -13,10 +13,10 @@ resources:
 env_variables:
   SMTP_SERVER: "smtp.gmail.com"
   SMTP_PORT: "587"
-  EMAIL_ADDRESS: "akrem.alamine@etudiant-fst.utm.tn"
-  EMAIL_PASSWORD: "onyrfabliruyjqdy"
+  EMAIL_ADDRESS: "mayez.ghouma@etudiant-fst.utm.tn"
+  EMAIL_PASSWORD: "esitgitlztgwwfrk"
   CSV_FILE_PATH: "data/contacts_real.csv"
-  CV_FILE_PATH: "assets/Akrem_Alamine_ENOP.pdf"
+  CV_FILE_PATH: "assets/cv_Mayez-Ghouma.pdf"
   START_HOUR: "0"
   END_HOUR: "23"
   TEST_MODE: "true"
