@@ -188,20 +188,29 @@ def get_next_recipient():
             logger.warning("No recipients found in CSV file")
             return None
             
-        # Sequential selection (no looping)
+        # REVERSE processing: Start from BOTTOM (last recipient) → TOP (first recipient)
         counter = get_email_counter()
         
-        # Check if we've reached the end of the list
+        # Check if we've processed all recipients (reached the top)
         if counter >= len(recipients):
-            logger.info(f"✅ All {len(recipients)} recipients have been contacted. Email campaign completed.")
+            logger.info(f"✅ All {len(recipients)} recipients have been contacted (BOTTOM→TOP). Email campaign completed.")
             return None
         
-        # Get current recipient
-        recipient = recipients[counter]
+        # Get recipient from BOTTOM: last recipient first, then work backwards
+        recipient_index = len(recipients) - 1 - counter  # Start from bottom, work up
         
-        # Update counter for next email (but don't loop back)
+        # Safety check to ensure we don't go below index 0
+        if recipient_index < 0:
+            logger.info(f"✅ Reached the TOP of CSV file. All recipients contacted (BOTTOM→TOP processing).")
+            return None
+            
+        recipient = recipients[recipient_index]
+        
+        # Update counter for next email (increment to move towards the top)
         next_counter = counter + 1
         update_email_counter(next_counter)
+        
+        logger.info(f"📧 Processing recipient #{counter + 1}/{len(recipients)} - Index {recipient_index} (BOTTOM→TOP order)")
         
         # Extract recipient data
         first_name = recipient.get('First Name', '').strip()
@@ -347,25 +356,39 @@ def debug_csv():
             reader = csv.DictReader(file)
             recipients = list(reader)
         
-        # Get current recipient
+        # Get current recipient (REVERSE processing: BOTTOM → TOP)
         counter = get_email_counter()
         if recipients:
-            recipient = recipients[counter % len(recipients)]
-            return jsonify({
-                'csv_path': csv_path,
-                'total_recipients': len(recipients),
-                'current_counter': counter,
-                'current_recipient': {
-                    'first_name': recipient.get('First Name', ''),
-                    'last_name': recipient.get('Last Name', ''),
-                    'email': recipient.get('Email', ''),
-                    'company': recipient.get('Company', ''),
-                    'title': recipient.get('Title', ''),
-                    'country': recipient.get('Country', '')
-                },
-                'raw_recipient_keys': list(recipient.keys()),
-                'all_recipients': recipients[:2]  # First 2 for debugging
-            })
+            # Calculate reverse index: start from bottom, work towards top
+            recipient_index = len(recipients) - 1 - counter
+            if recipient_index >= 0:
+                recipient = recipients[recipient_index]
+                return jsonify({
+                    'csv_path': csv_path,
+                    'total_recipients': len(recipients),
+                    'current_counter': counter,
+                    'processing_order': 'BOTTOM → TOP (Reverse)',
+                    'current_recipient_index': recipient_index,
+                    'current_recipient': {
+                        'first_name': recipient.get('First Name', ''),
+                        'last_name': recipient.get('Last Name', ''),
+                        'email': recipient.get('Email', ''),
+                        'company': recipient.get('Company', ''),
+                        'title': recipient.get('Title', ''),
+                        'country': recipient.get('Country', '')
+                    },
+                    'raw_recipient_keys': list(recipient.keys()),
+                    'all_recipients': recipients[:2]  # First 2 for debugging
+                })
+            else:
+                return jsonify({
+                    'csv_path': csv_path,
+                    'total_recipients': len(recipients),
+                    'current_counter': counter,
+                    'processing_order': 'BOTTOM → TOP (Reverse)',
+                    'status': 'COMPLETED - Reached top of CSV file',
+                    'message': 'All recipients have been processed from bottom to top'
+                })
         else:
             return jsonify({'error': 'No recipients found'}), 500
             
