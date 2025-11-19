@@ -45,7 +45,7 @@ def update_email_counter(counter):
         logger.error(f"Failed to update counter: {e}")
 
 def remove_recipient_from_csv(recipient_email):
-    """Remove recipient from CSV after successful email sending"""
+    """Remove the first recipient from CSV after successful email sending"""
     try:
         csv_path = os.environ.get('CSV_FILE_PATH', 'data/contacts_real.csv')
         
@@ -58,16 +58,23 @@ def remove_recipient_from_csv(recipient_email):
         with open(csv_path, 'r', encoding='utf-8') as file:
             reader = csv.DictReader(file)
             fieldnames = reader.fieldnames
-            recipients = [row for row in reader if row.get('Email', '').strip() != recipient_email]
+            recipients = list(reader)
+        
+        if not recipients:
+            logger.warning("No recipients left in CSV")
+            return False
+        
+        # Remove the first recipient (index 0) since we always process from the top
+        remaining_recipients = recipients[1:]
         
         # Write back the remaining recipients
         with open(csv_path, 'w', newline='', encoding='utf-8') as file:
             if fieldnames:
                 writer = csv.DictWriter(file, fieldnames=fieldnames)
                 writer.writeheader()
-                writer.writerows(recipients)
+                writer.writerows(remaining_recipients)
         
-        logger.info(f"✅ Removed {recipient_email} from CSV. Remaining recipients: {len(recipients)}")
+        logger.info(f"✅ Removed first recipient ({recipient_email}) from CSV. Remaining recipients: {len(remaining_recipients)}")
         return True
         
     except Exception as e:
