@@ -289,7 +289,7 @@ def status():
         'status': 'running',
         'automation': 'FULL PIPELINE ACTIVE',
         'features': ['Company Research', 'Content Generation', 'Personalized Emails'],
-        'business_hours': f"{os.environ.get('START_HOUR', '9')}:00 - {os.environ.get('END_HOUR', '17')}:00 UTC",
+        'business_hours': '24/7 - No time restrictions',
         'csv_status': {
             'file_exists': csv_exists,
             'file_path': csv_path,
@@ -501,25 +501,15 @@ def test_automation():
 
 @app.route('/cron/send-emails', methods=['GET', 'POST'])
 def cron_send_emails():
-    """Cron endpoint - sends emails during business hours only"""
+    """Cron endpoint - sends emails 24/7"""
     try:
         now = datetime.now()
-        current_hour = now.hour
-        current_weekday = now.weekday()
-        
-        start_hour = int(os.environ.get('START_HOUR', 9))
-        end_hour = int(os.environ.get('END_HOUR', 17))
         sender_email = os.environ.get('EMAIL_ADDRESS')
         sender_password = os.environ.get('EMAIL_PASSWORD')
         
-        # Business hours check - ignore if in test mode
-        is_weekday = current_weekday < 5
-        is_business_hours = start_hour <= current_hour < end_hour
-        test_mode = os.environ.get('TEST_MODE', 'false').lower() == 'true'
-        
-        if test_mode or (is_weekday and is_business_hours):
-            mode_msg = "TEST MODE - ignoring business hours" if test_mode else "business hours"
-            logger.info(f"✅ Automated pipeline started: {now.isoformat()} ({mode_msg})")
+        # Always send emails - no time restrictions
+        if True:
+            logger.info(f"✅ Automated pipeline started: {now.isoformat()} (24/7 mode)")
             
             if not sender_email or not sender_password:
                 return jsonify({'status': 'error', 'message': 'Email credentials not configured'}), 500
@@ -583,13 +573,6 @@ def cron_send_emails():
                         'status': 'error',
                         'message': 'No recipient data available - CSV file error'
                     }), 500
-        else:
-            reason = "weekend" if not is_weekday else "outside business hours"
-            return jsonify({
-                'status': 'skipped',
-                'message': f'No email sent - {reason}',
-                'timestamp': now.isoformat()
-            })
     
     except Exception as e:
         logger.error(f"❌ Cron job error: {str(e)}")
@@ -643,5 +626,5 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
     logger.info(f"🚀 Starting Data Engineering Email Sender - Mayez Ghouma v4.0 on port {port}")
     logger.info(f"📊 Specialization: Data Engineering & MLOps Internship Applications")
-    logger.info(f"⏰ Business hours: {os.environ.get('START_HOUR', '9')}:00 - {os.environ.get('END_HOUR', '17')}:00 UTC")
+    logger.info(f"⏰ Email sending: 24/7 - No time restrictions")
     app.run(host='0.0.0.0', port=port, debug=False)
