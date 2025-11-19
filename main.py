@@ -67,15 +67,25 @@ def remove_recipient_from_csv(recipient_email):
         # Remove the first recipient (index 0) since we always process from the top
         remaining_recipients = recipients[1:]
         
-        # Write back the remaining recipients
-        with open(csv_path, 'w', newline='', encoding='utf-8') as file:
-            if fieldnames:
-                writer = csv.DictWriter(file, fieldnames=fieldnames)
-                writer.writeheader()
-                writer.writerows(remaining_recipients)
-        
-        logger.info(f"✅ Removed first recipient ({recipient_email}) from CSV. Remaining recipients: {len(remaining_recipients)}")
-        return True
+        # Try to write back the remaining recipients
+        # Note: In App Engine, files might be read-only, so this might fail
+        try:
+            with open(csv_path, 'w', newline='', encoding='utf-8') as file:
+                if fieldnames:
+                    writer = csv.DictWriter(file, fieldnames=fieldnames)
+                    writer.writeheader()
+                    writer.writerows(remaining_recipients)
+            
+            logger.info(f"✅ Removed first recipient ({recipient_email}) from CSV. Remaining recipients: {len(remaining_recipients)}")
+            return True
+            
+        except PermissionError as pe:
+            logger.error(f"❌ Permission denied writing to CSV: {pe}")
+            logger.info(f"📝 App Engine file system is read-only. CSV removal skipped but email sent successfully.")
+            return False
+        except Exception as write_error:
+            logger.error(f"❌ Failed to write CSV file: {write_error}")
+            return False
         
     except Exception as e:
         logger.error(f"❌ Failed to remove recipient from CSV: {e}")
