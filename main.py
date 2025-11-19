@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Data Engineering Automated Email Sender - PRODUCTION VERSION with AI Content Generation
+Data Science Automated Email Sender - PRODUCTION VERSION with AI Content Generation
 Fully automated pipeline: Company Research → Content Generation → Email Sending
-For Mayez Ghouma - Data Engineering & MLOps Internship Applications
+For Mayez Ghouma - Data Science & MLOps Internship Applications
 """
 
 import os
@@ -78,9 +78,9 @@ def generate_personalized_email(first_name, last_name, title, company, country, 
     
     # Create personalized subject line
     subjects = [
-        f"Data Engineering Internship Application - {company}",
+        f"Data Science Internship Application - {company}",
         f"MLOps Student - Internship Opportunity at {company}",
-        f"End-of-Study Internship - Data Engineering & MLOps Expertise",
+        f"End-of-Study Internship - Data Science & MLOps Expertise",
         f"Data Science Student seeking Internship at {company}",
         f"Final Year Student - AI/ML Infrastructure Internship"
     ]
@@ -92,9 +92,9 @@ def generate_personalized_email(first_name, last_name, title, company, country, 
     # Generate personalized email body
     email_body = f"""Dear {first_name} {last_name},
 
-I hope this message finds you well. As the {title} at {company}, I believe you would be interested in learning about my expertise in data engineering and machine learning operations.
+I hope this message finds you well. As the {title} at {company}, I believe you would be interested in learning about my expertise in data science and machine learning operations.
 
-I am Mayez Ghouma, a final-year data engineering student specializing in MLOps and AI infrastructure with hands-on experience in:
+I am Mayez Ghouma, a final-year data science student specializing in MLOps and AI infrastructure with hands-on experience in:
 
 • Data Pipeline Development & ETL (Apache Airflow, Kafka, Spark)
 • Machine Learning Operations (MLflow, Kubeflow, Docker, Kubernetes)
@@ -103,18 +103,18 @@ I am Mayez Ghouma, a final-year data engineering student specializing in MLOps a
 • Data Warehousing & Analytics (BigQuery, Snowflake, dbt)
 • ML Model Deployment & Monitoring (TensorFlow Serving, FastAPI)
 
-Given {company}'s focus on {company_insights['focus']}, I believe my technical skills in data engineering and MLOps practices could contribute to your data-driven initiatives and machine learning infrastructure.
+Given {company}'s focus on {company_insights['focus']}, I believe my technical skills in data science and MLOps practices could contribute to your data-driven initiatives and machine learning infrastructure.
 
-As I am completing my data engineering studies, I am actively seeking end-of-study internship opportunities where I can apply my MLOps and data engineering expertise while contributing to innovative AI/ML projects{f' in {country}' if country else ''}.
+As I am completing my data science studies, I am actively seeking end-of-study internship opportunities where I can apply my MLOps and data science expertise while contributing to innovative AI/ML projects{f' in {country}' if country else ''}.
 
-I would welcome the opportunity to discuss how my technical skills and passion for data science could support {company}'s data strategy and machine learning initiatives. I have attached my comprehensive CV detailing my technical projects and hands-on experience with modern data engineering and MLOps tools.
+I would welcome the opportunity to discuss how my technical skills and passion for data science could support {company}'s data strategy and machine learning initiatives. I have attached my comprehensive CV detailing my technical projects and hands-on experience with modern data science and MLOps tools.
 
 Thank you for your time and consideration.
 
 Best regards,
 
 Mayez Ghouma
-Data Engineering & MLOps Student
+Data Science & MLOps Student
 Email: mayez.ghouma@etudiant-fst.utm.tn"""
 
     return subject, email_body
@@ -250,9 +250,9 @@ def get_next_recipient():
 def home():
     return jsonify({
         'status': 'OK',
-        'message': 'Data Engineering Email Sender - Mayez Ghouma with AI Content',
+        'message': 'Data Science Email Sender - Mayez Ghouma with AI Content',
         'student': 'Mayez Ghouma',
-        'specialization': 'Data Engineering & MLOps',
+        'specialization': 'Data Science & MLOps',
         'version': '4.0-DATA-ENGINEERING',
         'features': ['Company Research', 'AI Content Generation', 'MLOps Personalized Emails'],
         'timestamp': datetime.now().isoformat()
@@ -262,7 +262,7 @@ def home():
 def health():
     return jsonify({
         'status': 'healthy',
-        'service': 'data-engineering-email-sender',
+        'service': 'data-science-email-sender',
         'student': 'Mayez Ghouma',
         'version': '4.0-DATA-ENGINEERING',
         'environment': 'production',
@@ -622,7 +622,7 @@ def test_email():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
-    logger.info(f"🚀 Starting Data Engineering Email Sender - Mayez Ghouma v4.0 on port {port}")
-    logger.info(f"📊 Specialization: Data Engineering & MLOps Internship Applications")
+    logger.info(f"🚀 Starting Data Science Email Sender - Mayez Ghouma v4.0 on port {port}")
+    logger.info(f"📊 Specialization: Data Science & MLOps Internship Applications")
     logger.info(f"⏰ Email sending: 24/7 - No time restrictions")
     app.run(host='0.0.0.0', port=port, debug=False)
