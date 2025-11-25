@@ -12,20 +12,32 @@ import csv
 import json
 import requests
 from datetime import datetime
+from dotenv import load_dotenv
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
+from io import StringIO
+
 from flask import Flask, jsonify
+
+# Load environment variables from .env for local development
+load_dotenv()
+
+# Initialize Flask app
+app = Flask(__name__)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__)
+# Global counter for round-robin email sending - use Windows-compatible path
+import tempfile
+temp_dir = tempfile.gettempdir()
+email_counter_file = os.path.join(temp_dir, 'pfe_email_counter.txt')
 
-# Global counter for round-robin email sending
-email_counter_file = '/tmp/email_counter.txt'
+# Failed emails log file
+failed_emails_file = 'data/Failed.csv'
 
 def get_email_counter():
     """Get current email counter"""
@@ -42,6 +54,7 @@ def update_email_counter(counter):
     try:
         with open(email_counter_file, 'w') as f:
             f.write(str(counter))
+        logger.info(f"✅ Counter updated to: {counter}")
     except Exception as e:
         logger.error(f"Failed to update counter: {e}")
 
@@ -63,6 +76,38 @@ def advance_to_next_recipient(recipient_email):
         
     except Exception as e:
         logger.error(f"❌ Failed to advance to next recipient: {e}")
+        return False
+
+def save_failed_email(recipient_data, error_message):
+    """Save failed email to Failed.csv for later review"""
+    try:
+        file_exists = os.path.exists(failed_emails_file)
+        
+        with open(failed_emails_file, 'a', newline='', encoding='utf-8') as f:
+            fieldnames = ['First Name', 'Last Name', 'Email', 'Company', 'Title', 'Country', 'Error', 'Timestamp']
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            
+            # Write header if file is new
+            if not file_exists:
+                writer.writeheader()
+            
+            # Write failed record
+            writer.writerow({
+                'First Name': recipient_data.get('first_name', ''),
+                'Last Name': recipient_data.get('last_name', ''),
+                'Email': recipient_data.get('email', ''),
+                'Company': recipient_data.get('company', ''),
+                'Title': recipient_data.get('title', ''),
+                'Country': recipient_data.get('country', ''),
+                'Error': str(error_message)[:200],  # Truncate long errors
+                'Timestamp': datetime.now().isoformat()
+            })
+        
+        logger.info(f"💾 Failed email saved to Failed.csv")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Failed to save failed email: {e}")
         return False
 
 def research_company(company_name):
@@ -198,9 +243,26 @@ def get_next_recipient():
             return None
         
         recipients = []
-        with open(csv_path, 'r', encoding='utf-8') as file:
-            reader = csv.DictReader(file)
-            recipients = list(reader)
+        try:
+            with open(csv_path, 'r', encoding='utf-8', errors='ignore') as file:
+                # Read and clean lines
+                lines = file.readlines()
+                cleaned_lines = []
+                for i, line in enumerate(lines):
+                    # Remove NUL characters and other problematic characters
+                    cleaned_line = line.replace('\x00', '').strip()
+                    if cleaned_line or i == 0:  # Keep header and non-empty lines
+                        cleaned_lines.append(cleaned_line + '\n')
+                
+                # Parse CSV from cleaned lines
+                csv_content = ''.join(cleaned_lines)
+                reader = csv.DictReader(StringIO(csv_content))
+                for row in reader:
+                    if row and any(row.values()):  # Skip completely empty rows
+                        recipients.append(row)
+        except Exception as e:
+            logger.error(f"CSV parsing error: {e}")
+            return None
         
         if not recipients:
             logger.warning("No recipients found in CSV file")
@@ -217,13 +279,24 @@ def get_next_recipient():
         # Get the recipient at current counter position
         recipient = recipients[counter]
         
-        # Extract recipient data
-        first_name = recipient.get('First Name', '').strip()
-        last_name = recipient.get('Last Name', '').strip()
-        title = recipient.get('Title', '').strip()
-        company = recipient.get('Company', '').strip()
-        email = recipient.get('Email', '').strip()
-        country = recipient.get('Country', '').strip()
+        # Extract recipient data with NULL-safe handling
+        first_name = (recipient.get('First Name') or '').strip()
+        last_name = (recipient.get('Last Name') or '').strip()
+        title = (recipient.get('Title') or '').strip()
+        company = (recipient.get('Company') or '').strip()
+        email = (recipient.get('Email') or '').strip()
+        country = (recipient.get('Country') or '').strip()
+        
+        # Skip if no email is available
+        if not email:
+            logger.warning(f"Recipient {counter + 1} has no email - skipping")
+            advance_to_next_recipient(f"skipped_{counter}")
+            return get_next_recipient()  # Try next recipient
+        
+        # Skip if no company is available, but continue with generic values
+        if not company:
+            company = "Your Company"
+            logger.warning(f"Recipient {counter + 1} has no company name - using generic")
         
         # Research company and generate personalized content
         logger.info(f"🔍 Researching company: {company} (recipient {counter + 1}/{len(recipients)})")
@@ -398,7 +471,7 @@ def debug_csv():
 
 @app.route('/cron/send-emails', methods=['GET', 'POST'])
 def cron_send_emails():
-    """Cron endpoint - sends emails during business hours only"""
+    """Cron endpoint - sends emails (with business hours override option for local development)"""
     try:
         now = datetime.now()
         current_hour = now.hour
@@ -409,13 +482,28 @@ def cron_send_emails():
         sender_email = os.environ.get('EMAIL_ADDRESS')
         sender_password = os.environ.get('EMAIL_PASSWORD')
         
-        # Business hours check - ignore if in test mode
+        # Business hours check with override options
         is_weekday = current_weekday < 5
         is_business_hours = start_hour <= current_hour < end_hour
         test_mode = os.environ.get('TEST_MODE', 'false').lower() == 'true'
+        production_mode = os.environ.get('PRODUCTION_MODE', 'false').lower() == 'true'
+        ignore_business_hours = os.environ.get('IGNORE_BUSINESS_HOURS', 'false').lower() == 'true'
         
-        if test_mode or (is_weekday and is_business_hours):
-            mode_msg = "TEST MODE - ignoring business hours" if test_mode else "business hours"
+        # Determine if we should send email
+        should_send = False
+        mode_msg = ""
+        
+        if production_mode and ignore_business_hours:
+            should_send = True
+            mode_msg = "PRODUCTION MODE - ignoring business hours"
+        elif test_mode:
+            should_send = True
+            mode_msg = "TEST MODE - ignoring business hours"
+        elif is_weekday and is_business_hours:
+            should_send = True
+            mode_msg = "business hours"
+        
+        if should_send:
             logger.info(f"✅ Automated pipeline started: {now.isoformat()} ({mode_msg})")
             
             if not sender_email or not sender_password:
@@ -452,10 +540,21 @@ def cron_send_emails():
                         }
                     })
                 else:
+                    # Failed to send - save to Failed.csv and move to next
+                    save_failed_email(recipient_data, message)
+                    advance_to_next_recipient(recipient_data['email'])
+                    
                     return jsonify({
-                        'status': 'error',
-                        'message': f'❌ Failed to send email: {message}'
-                    }), 500
+                        'status': 'failed',
+                        'message': f'⚠️ Email failed - moving to next recipient',
+                        'timestamp': now.isoformat(),
+                        'error': message,
+                        'email_details': {
+                            'to': recipient_data['email'],
+                            'recipient_name': recipient_data['full_name'],
+                            'saved_to_failed': True
+                        }
+                    })
             else:
                 # Check if campaign is completed (CSV is empty) vs other errors
                 csv_path = os.environ.get('CSV_FILE_PATH', 'data/contacts_real.csv')
@@ -523,8 +622,27 @@ def reset_counter():
             'message': f'Failed to reset counter: {str(e)}'
         }), 500
 
+from apscheduler.schedulers.background import BackgroundScheduler
+
+def trigger_send_email_job():
+    try:
+        # Directly call the cron_send_emails function (Flask route logic)
+        with app.app_context():
+            cron_send_emails()
+    except Exception as e:
+        logger.error(f"Scheduled email send failed: {e}")
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
     logger.info(f"🚀 Starting PFE Email Sender - PRODUCTION v5.0 on port {port}")
     logger.info(f"⏰ Business hours: {os.environ.get('START_HOUR', '9')}:00 - {os.environ.get('END_HOUR', '17')}:00 UTC")
+    logger.info(f"📧 Sending 5 emails per minute (every 12 seconds)")
+    logger.info(f"📁 Counter file: {email_counter_file}")
+    logger.info(f"📊 Current counter value: {get_email_counter()}")
+
+    # Start scheduler to send email every 12 seconds (5 per minute)
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(trigger_send_email_job, 'interval', seconds=12)
+    scheduler.start()
+
     app.run(host='0.0.0.0', port=port, debug=False)
