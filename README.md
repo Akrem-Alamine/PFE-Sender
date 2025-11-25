@@ -26,7 +26,7 @@ A Python Flask application that automatically sends personalized recruitment ema
 
 ```powershell
 # Clone the repository
-git clone https://github.com/Akrem-Alamine/Akrem-Devops-PFE-Sender.git
+git clone https://github.com/Akrem-Alamine/PFE-Sender.git
 cd Akrem-Devops-PFE-Sender
 
 # Install dependencies
